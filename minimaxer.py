@@ -14,6 +14,9 @@ class Result:
         self.value = value
         self.children = []
 
+    def __str__(self):
+        return f'{self.type.name} {self.value}: {str(self.children)}'
+
     def updateValue(self, value):
         self.value = value
 
@@ -29,8 +32,8 @@ class Minimaxer:
     def minimax(self, node, maximising, depth=0):
         if depth >= self.limit:
             return Result(ResultType.HEURISTIC, node.evaluate())
-        
-        children = node.getChildren()
+
+        children = node.children(maximising)
         if len(children) < 1:
             return Result(ResultType.LEAF_NODE, node.evaluate())
 
@@ -38,7 +41,8 @@ class Minimaxer:
         optimal = Result(ResultType.NORMAL, initial)
 
         for child in children:
-            result = self.minimax(child, not maximising, depth=depth-1)
+            result = self.minimax(child, not maximising, depth=depth+1)
+            print(f'    Result: {result.value}\n{child}')
             optimal.addChild(result)
 
             if maximising and result.value > optimal.value:
