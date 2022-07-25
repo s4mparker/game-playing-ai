@@ -1,18 +1,22 @@
 class TreeNode:
 
-    def __init__(self, data=None, metadata=None):
+    def __init__(self, data=None):
         self.data       = data
-        self.metadata   = metadata
         self.children   = []
 
     def __str__(self):
         return f'Node: {str(self.data)}'
 
+    def __len__(self):
+        nodes = []
+        self.breadth_first_traversal(lambda item: nodes.append(item))
+        return len(nodes)
+
+    def getData(self):
+        return self.data
+
     def setData(self, data):
         self.data = data
-
-    def setMetadata(self, metadata):
-        self.metadata = metadata
 
     def addChild(self, child):
         self.children.append(child)
