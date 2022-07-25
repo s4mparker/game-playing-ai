@@ -1,5 +1,4 @@
 import numpy as np
-import copy as cp
 import itertools as it
 import functools as f
 
@@ -9,11 +8,8 @@ class TicTacToeBoard:
 
     default = '-'
 
-    def __init__(self, board=None):
-        if board is not None:
-            self.board = board.copy()
-        else:
-            self.board = np.full((3, 3), None, dtype=Player)
+    def __init__(self):
+        self.board = np.full((3, 3), None, dtype=Player)
 
     def __str__(self):
         return '\n'.join([' '.join([str(pos) if pos is not None else self.default for pos in row]) for row in self.board])
@@ -31,6 +27,11 @@ class TicTacToeBoard:
     def get(self, coordinates):
         (x, y) = coordinates
         return self.board[y][x]
+
+    def copy(self):
+        new_board = TicTacToeBoard()
+        new_board.board = self.board.copy()
+        return new_board
 
     def evaluate(self):
         lines = [
@@ -65,7 +66,7 @@ class TicTacToeBoard:
         children = []
         for coordinates in it.product(range(3), range(3)):
             if self.get(coordinates) is None:
-                child = TicTacToeBoard(board=self.board)
+                child = self.copy()
                 child.set(coordinates, player)
                 children.append(child)
         return children
