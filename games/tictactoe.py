@@ -1,6 +1,7 @@
 import numpy as np
 import copy as cp
 import itertools as it
+import functools as f
 
 from src import Player
 
@@ -9,10 +10,16 @@ class TicTacToeBoard:
     default = '-'
 
     def __init__(self):
-        self.board = np.full((3, 3), None, dtype=Player)
+        self.board   = np.full((3, 3), None, dtype=Player)
 
     def __str__(self):
         return '\n'.join([' '.join([str(pos) if pos is not None else self.default for pos in row]) for row in self.board])
+
+    def __hash__(self):
+        subhash = lambda board: int.from_bytes(str.encode(''.join([str(pos) if pos is not None else self.default for pos in board.flatten()])), byteorder='little')
+        components = sorted([subhash(np.rot90(self.board, k=angle)) for angle in range(4)])
+        hash = f.reduce(lambda x, y: x*y^x, components)
+        return hash
 
     def set(self, coordinates, player):
         (x, y) = coordinates
@@ -54,3 +61,4 @@ class TicTacToeBoard:
                 child.set(coordinates, player)
                 children.append(child)
         return children
+
