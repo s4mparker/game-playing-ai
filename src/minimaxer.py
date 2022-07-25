@@ -1,5 +1,5 @@
 import numpy as np
-from . import Player
+from . import Player, TreeNode
 
 class Minimaxer:
 
