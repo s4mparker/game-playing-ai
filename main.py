@@ -1,4 +1,4 @@
-from src import Minimaxer, Player
+from src import Minimaxer, Player, Table
 from games import TicTacToeBoard
 
 b = TicTacToeBoard()
@@ -12,7 +12,6 @@ b.set((0, 0), Player.MAX)
 print(b)
 
 
-m = Minimaxer(b, Player.MIN, limit=5, use_transposition=False)
+m = Minimaxer(b, Player.MAX, limit=20, use_transpositions=True, use_alphabeta=True)
 print(m.tree)
 print(len(m.tree))
-
