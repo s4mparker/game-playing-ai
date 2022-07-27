@@ -1,24 +1,27 @@
 import enum as e
 
-class PlayerData:
-
-    def __init__(self, sign, marker):
-        self.sign   = sign
-        self.marker = marker
-
 class Player(e.Enum):
 
-    MAX = PlayerData(sign=+1, marker='x')
-    MIN = PlayerData(sign=-1, marker='o')
+    MAX = {'sign': +1, 'marker': 'o'}
+    MIN = {'sign': -1, 'marker': 'x'}
 
     def __str__(self):
-        return f'{self.value.marker}'
+        return f'{self.marker}'
 
     def __int__(self):
-        return self.value.sign
+        return self.sign
 
     def __mul__(self, value):
-        return self.value.sign * value
+        return self.sign * value
 
+    @property
+    def sign(self):
+        return self.value['sign']
+
+    @property
+    def marker(self):
+        return self.value['marker']
+
+    @property
     def next(self):
         return Player.MAX if self == Player.MIN else Player.MIN
