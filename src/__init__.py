@@ -1,4 +1,4 @@
 from .player import Player
-from .tree import TreeNode
-from .transposition import Table
+from .tree import Node, NodeType
+from .table import Table
 from .minimaxer import Minimaxer

@@ -1,5 +1,13 @@
+import time as time
+
 import numpy as np
-from . import Player, TreeNode, Table
+import enum as e
+
+from . import Player, Table, Node, NodeType
+
+# implement tree search method
+
+
 
 class Minimaxer:
 
@@ -7,47 +15,57 @@ class Minimaxer:
         use_transpositions  = kwargs.pop('use_transpositions', False)
         use_alphabeta       = kwargs.pop('use_alphabeta', False)
         limit               = kwargs.pop('limit', 5)
+        verbose             = kwargs.pop('verbose', 0)
 
-        self.transpositions = Table() if use_transpositions else None
-        self.alphabeta      = use_alphabeta
-        self.limit          = limit
-        self.tree           = self.minimax(state, player)
+        self._transpositions = Table() if use_transpositions else None
+        self._alphabeta      = use_alphabeta
+        self._limit          = limit
+        self._verbose        = verbose
+
+        self.generateTree(state, player)
+
+    def generateTree(self, state, player):
+        start = time.time()
+        self._tree = self.minimax(state, player)
+        end = time.time()
+
+        if self._verbose >= 1:
+            print(f'Generated a tree containing {len(self._tree)} nodes in {round(end-start, 2)}s')
 
     def minimax(self, state, player, depth=0, alpha=-1*np.Inf, beta=np.Inf):
-        if self.transpositions is not None and state in self.transpositions:
-            return TreeNode(data=self.transpositions[state])
+        node        = Node()
+        node.state  = state
+        children    = state.children(player)
 
-        if depth >= self.limit:
-            return TreeNode(data=state.evaluate())
-
-        children = state.children(player)
-        if len(children) < 1:
-            value = state.evaluate()
-            if self.transpositions is not None and state not in self.transpositions:
-                self.transpositions[state] = value
-            return TreeNode(data=value)
+        if bool(self._transpositions) and state in self._transpositions:
+            node.value = self._transpositions[state]
+            node.flag  = NodeType.TRANSPOSITION
+        elif depth >= self._limit:
+            node.value = state.evaluate()
+            node.flag  = NodeType.MAX_DEPTH
+        elif len(children) < 1:
+            node.value = state.evaluate()
+            node.flag  = NodeType.TERMINAL
         else:
-            node = TreeNode(data=(player * np.Inf) * -1)
-            next_player = player.next()
+            node.value = (player * np.Inf) * -1
+            node.flag  = NodeType.NORMAL
 
             for child in children:
-                child_node = self.minimax(child, next_player, depth=depth+1, alpha=alpha, beta=beta)
-                node.addChild(child=child_node)
+                childnode = self.minimax(child, player.next, depth+1, alpha, beta)
+                node.addChild(childnode)
 
-                if player == Player.MAX:
-                    if child_node.getData() > node.getData():
-                        node.setData(child_node.getData())
-                    if self.alphabeta:
-                        alpha = max(alpha, node.getData())
-                else:
-                    if child_node.getData() < node.getData():
-                        node.setData(child_node.getData())
-                    if self.alphabeta:
-                        beta = min(beta, node.getData())
-                
-                if self.alphabeta and beta <= alpha:
-                    break
-            
-            if self.transpositions is not None and state not in self.transpositions:
-                    self.transpositions[state] = node.getData()
-            return node
+                if player == Player.MAX and childnode.value > node.value:
+                    node.value = childnode.value
+                elif player == Player.MIN and childnode.value < node.value:
+                    node.value = childnode.value
+
+                if self._alphabeta:
+                    alpha = max(alpha, node.value) if player == Player.MAX else alpha
+                    beta  = min(beta, node.value) if player == Player.MIN else beta
+                    if beta <= alpha:
+                        break
+
+        if node.flag in [NodeType.TERMINAL, NodeType.NORMAL] and bool(self._transpositions):
+            self._transpositions[state] = node.value
+        
+        return node

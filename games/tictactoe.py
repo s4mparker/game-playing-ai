@@ -46,13 +46,15 @@ class TicTacToeBoard:
         ]
 
         for (a_prime, b_prime, c_prime) in lines:
-            a, b, c = self.get(a_prime), self.get(b_prime), self.get(c_prime)
-            if a is not None and b is not None and c is not None:
-                if a == b and b == c:
-                    return a * np.Inf
-                else:
-                    blocking = [player for player in [a, b, c] if [a, b, c].count(player) == 1][0]
-                    return blocking * 100
+            positions = [self.get(a_prime), self.get(b_prime), self.get(c_prime)]
+            if all([p is not None for p in positions]) and len(set(positions)) == 1:
+                return positions[0] * np.Inf
+
+        for (a_prime, b_prime, c_prime) in lines:
+            positions = [self.get(a_prime), self.get(b_prime), self.get(c_prime)]
+            if all([p is not None for p in positions]) and len(set(positions)) == 2:
+                blocking = [p for p in positions if positions.count(p) == 1][0]
+                return blocking * 100
 
         full_positions = [player is not None for player in self.board.flatten()]
         if all(full_positions):

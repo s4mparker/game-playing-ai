@@ -32,6 +32,9 @@ class Table(dict):
     def __str__(self):
         return '\n'.join([f'{k}: {v}' for (k, v) in self.items()])
 
+    def __bool__(self):
+        return True
+
     def __contains__(self, key):
         tkey = self.transform_key(key)
         return tkey in self.keys()
