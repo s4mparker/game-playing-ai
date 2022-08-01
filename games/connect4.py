@@ -1,6 +1,6 @@
 import numpy as np
 
-from src import Player
+from utils import Player
 
 class Connect4Board:
 

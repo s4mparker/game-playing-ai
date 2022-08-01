@@ -2,7 +2,7 @@ import numpy as np
 import itertools as it
 import functools as f
 
-from src import Player
+from utils import Player
 
 class TicTacToeBoard:
 

@@ -1,13 +1,26 @@
-import time as time
-
 import numpy as np
 import enum as e
+import time as t
 
-from . import Player, Table, Node, NodeType
+from utils import Player, Table, nodify
 
-# implement tree search method
+class NodeFlag(e.Enum):
+    STANDARD = 0
+    TERMINAL = 1
+    TRANSPOSITION = 2
+    DEPTH = 3
 
+@nodify
+class Node:
 
+    state = property(lambda o: getattr(o, '_state'), lambda o, v: setattr(o, '_state', v))
+    value = property(lambda o: getattr(o, '_value'), lambda o, v: setattr(o, '_value', v))
+    flag  = property(lambda o: getattr(o, '_flag'), lambda o, v: setattr(o, '_flag', v))
+
+    def __init__(self, **kwargs):
+        state = kwargs.pop('state', None)
+        value = kwargs.pop('value', 0)
+        flag  = kwargs.pop('flag', None)
 
 class Minimaxer:
 
@@ -25,9 +38,9 @@ class Minimaxer:
         self.generateTree(state, player)
 
     def generateTree(self, state, player):
-        start = time.time()
+        start = t.time()
         self._tree = self.minimax(state, player)
-        end = time.time()
+        end = t.time()
 
         if self._verbose >= 1:
             print(f'Generated a tree containing {len(self._tree)} nodes in {round(end-start, 2)}s')
@@ -39,16 +52,16 @@ class Minimaxer:
 
         if bool(self._transpositions) and state in self._transpositions:
             node.value = self._transpositions[state]
-            node.flag  = NodeType.TRANSPOSITION
+            node.flag  = NodeFlag.TRANSPOSITION
         elif depth >= self._limit:
             node.value = state.evaluate()
-            node.flag  = NodeType.MAX_DEPTH
+            node.flag  = NodeFlag.DEPTH
         elif len(children) < 1:
             node.value = state.evaluate()
-            node.flag  = NodeType.TERMINAL
+            node.flag  = NodeFlag.TERMINAL
         else:
             node.value = (player * np.Inf) * -1
-            node.flag  = NodeType.NORMAL
+            node.flag  = NodeFlag.STANDARD
 
             for child in children:
                 childnode = self.minimax(child, player.next, depth+1, alpha, beta)
@@ -65,7 +78,7 @@ class Minimaxer:
                     if beta <= alpha:
                         break
 
-        if node.flag in [NodeType.TERMINAL, NodeType.NORMAL] and bool(self._transpositions):
+        if node.flag in [NodeFlag.TERMINAL, NodeFlag.STANDARD] and bool(self._transpositions):
             self._transpositions[state] = node.value
         
         return node
