@@ -1,10 +1,12 @@
-from src import Minimaxer
 from utils import Player, dfs, bfs
+from minimax import Minimax
 from games import TicTacToeBoard
 
-b = TicTacToeBoard()
-p = Player.MAX
+board = TicTacToeBoard()
+print(board)
 
-m = Minimaxer(b, p, limit=2)
-bfs(m._tree, lambda x: print(f'{" "*x.depth}{str(x)}'))
+m = Minimax.generate(board, Player.MAX, transpositions=False, alpha_beta=False, limit=2)
 
+func = lambda node : print(f'{" "*node.depth}{node}')
+bfs(m, func)
+print(f'Tree: {m.size}')

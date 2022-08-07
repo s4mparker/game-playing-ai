@@ -15,10 +15,7 @@ class TicTacToeBoard:
         return '\n'.join([' '.join([str(pos) if pos is not None else self.default for pos in row]) for row in self.board])
 
     def __hash__(self):
-        subhash = lambda board: int.from_bytes(str.encode(''.join([str(pos) if pos is not None else self.default for pos in board.flatten()])), byteorder='little')
-        components = sorted([subhash(np.rot90(self.board, k=angle)) for angle in range(4)])
-        hash = f.reduce(lambda x, y: x^y+x+y, components)
-        return hash
+        return int.from_bytes(str.encode(''.join([str(pos) if pos is not None else self.default for pos in self.board.flatten()])), byteorder='little')
 
     def set(self, coordinates, player):
         (x, y) = coordinates

@@ -33,6 +33,10 @@ def nodify(cls):
             else:
                 return 0
 
+        @property
+        def size(self):
+            return sum([child.size for child in self.children]) + 1
+
     return Node
 
 def dfs(node, func):
