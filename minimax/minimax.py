@@ -1,5 +1,4 @@
 import numpy as np
-import time as t
 
 from minimax import Node, Flag
 from utils import Player, Table

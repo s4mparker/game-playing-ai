@@ -45,21 +45,16 @@ class TicTacToeBoard:
         for (a_prime, b_prime, c_prime) in lines:
             positions = [self.get(a_prime), self.get(b_prime), self.get(c_prime)]
             if all([p is not None for p in positions]) and len(set(positions)) == 1:
-                return positions[0] * np.Inf
+                return positions[0] * 1
 
+        score = 0
         for (a_prime, b_prime, c_prime) in lines:
             positions = [self.get(a_prime), self.get(b_prime), self.get(c_prime)]
             if all([p is not None for p in positions]) and len(set(positions)) == 2:
                 blocking = [p for p in positions if positions.count(p) == 1][0]
-                return blocking * 100
+                score += blocking * 0.05
 
-        full_positions = [player is not None for player in self.board.flatten()]
-        if all(full_positions):
-            return 0
-        elif any(full_positions):
-            return sum([int(player) for player in self.board.flatten() if player is not None])
-        else:
-            return 0
+        return score
 
     def children(self, player):
         children = []

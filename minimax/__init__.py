@@ -1,2 +1,2 @@
-from .node import *
-from .minimax import *
+from .node import Flag, Node
+from .minimax import Minimax

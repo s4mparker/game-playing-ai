@@ -1,5 +1,5 @@
 from enum import Enum
-from utils import nodify
+from utils import BasicNode
 
 __all__ = ['Flag', 'Node']
 
@@ -9,14 +9,21 @@ class Flag(Enum):
     TRANSPOSITION = 2
     DEPTH = 3
 
-@nodify
-class Node:
-
-    state = property(lambda o: getattr(o, '_state'), lambda o, v: setattr(o, '_state', v))
-    value = property(lambda o: getattr(o, '_value'), lambda o, v: setattr(o, '_value', v))
-    flag  = property(lambda o: getattr(o, '_flag'), lambda o, v: setattr(o, '_flag', v))
+class Node(BasicNode):
 
     def __init__(self, **kwargs):
-        state = kwargs.pop('state', None)
-        value = kwargs.pop('value', 0)
-        flag  = kwargs.pop('flag', None)
+        self.state = kwargs.pop('state', None)
+        self.value = kwargs.pop('value', 0)
+        self.flag  = kwargs.pop('flag', None)
+        super().__init__(**kwargs)
+
+    @property
+    def flag(self):
+        return self._flag
+
+    @flag.setter
+    def flag(self, value):
+        if value is None or type(value) is Flag:
+            self._flag = value
+        else:
+            raise TypeError('expected a Flag')

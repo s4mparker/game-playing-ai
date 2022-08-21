@@ -1,6 +1,6 @@
-import enum as e
+from enum import Enum
 
-class Player(e.Enum):
+class Player(Enum):
 
     MAX = {'sign': +1, 'marker': 'o'}
     MIN = {'sign': -1, 'marker': 'x'}

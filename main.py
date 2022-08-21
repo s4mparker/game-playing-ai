@@ -1,19 +1,11 @@
 from utils import Player, dfs, bfs
 from minimax import Minimax
+from mcts import MCTS
 from games import TicTacToeBoard, Connect4Board
 
-# board = TicTacToeBoard()
-# print(board)
+b = TicTacToeBoard()
 
-# m = Minimax.generate(board, Player.MAX, transpositions=False, alpha_beta=False, limit=2)
+# t = Minimax.generate(b, Player.MAX, transpositions=True, alpha_beta=True)
+t = MCTS.generate(b, Player.MAX, limit=1000, c=0.5)
 
-# func = lambda node : print(f'{" "*node.depth}{node}')
-# bfs(m, func)
-# print(f'Tree: {m.size}')
-
-c = Connect4Board()
-print(c, end='\n\n')
-
-
-for child in c.children(Player.MAX):
-    print(child, end='\n\n')
+dfs(t, func=lambda x: print(f'{" " * x.depth}({x.depth} - {x.visited}) {x}'))
