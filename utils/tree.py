@@ -39,6 +39,10 @@ class BasicNode:
     def size(self):
         return sum([child.size for child in self.children]) + 1
 
+    @property
+    def isTerminal(self):
+        return len(self.children) == 0
+
     def addChild(self, node):
         if issubclass(type(node), BasicNode):
             node.parent = self
